@@ -11,6 +11,7 @@
     "develop": "GATSBY_DB_NODES=loki gatsby develop",
     "start": "GATSBY_DB_NODES=loki gatsby develop",
     "build": "GATSBY_DB_NODES=loki gatsby build",
+    "build:netlify": "gatsby build",
     "serve": "GATSBY_DB_NODES=loki gatsby serve",
     "clean": "gatsby clean"
   },
