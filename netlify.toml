@@ -5,5 +5,9 @@
 [build.environment]
   NODE_VERSION = "20"
   GATSBY_SKIP_VALIDATE_ENGINES = "1"
+  # Force skip Rendering Engines validation on Netlify by making
+  # functions target differ from the build machine platform/arch.
+  GATSBY_FUNCTIONS_PLATFORM = "darwin"
+  GATSBY_FUNCTIONS_ARCH = "arm64"
 
 
