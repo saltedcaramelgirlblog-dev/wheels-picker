@@ -9,8 +9,8 @@
  */
 const netlifyAdapter = (require("gatsby-adapter-netlify").default || require("gatsby-adapter-netlify"))
 
-// Prefer Netlify-provided URL in production, fallback to deploy URL or localhost
-const siteUrl = process.env.URL || process.env.DEPLOY_URL || "http://localhost:8000"
+// Hardcode canonical site URL
+const siteUrl = "https://www.wheelspicker.com"
 
 module.exports = {
   adapter: netlifyAdapter(),
