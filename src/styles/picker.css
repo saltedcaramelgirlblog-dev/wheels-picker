@@ -1,0 +1,553 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* Dark theme */
+/* Dark theme removed */
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+.header {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.wheel-icon {
+    font-size: 1.5rem;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.nav {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nav-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+}
+
+.share-btn {
+    background: rgba(255,255,255,0.2);
+    font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+    display: flex;
+    flex: 1;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Wheel Section */
+.wheel-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* When the homepage only renders the wheel section, avoid stretching to full width */
+.main-content > .wheel-section:only-child {
+    flex: 0 1 auto;
+}
+
+.wheel-container {
+    text-align: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 700px;
+}
+
+.wheel-container h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #2E7D32;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.wheel-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 2rem 0;
+}
+
+#wheelCanvas {
+    border-radius: 50%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+.spin-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 96px;
+    height: 96px;
+    background: #333;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+.spin-button:hover {
+    background: #555;
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.spin-button:active {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+.pointer {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 16px solid white;
+    margin-bottom: 0.5rem;
+}
+
+.spin-button span {
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.wheel-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.control-btn {
+    background: #f0f0f0;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btn:hover {
+    background: #e0e0e0;
+    transform: scale(1.1);
+}
+
+.control-btn i {
+    color: #666;
+}
+
+/* Inputs Panel */
+.inputs-panel {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 2rem;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.panel-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2E7D32;
+}
+
+.panel-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.panel-btn {
+    background: #f0f0f0;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel-btn:hover {
+    background: #e0e0e0;
+    transform: scale(1.05);
+}
+
+.panel-btn i {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.input-section {
+    flex: 1;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#inputField {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+#inputField:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.add-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+    background: #45a049;
+    transform: scale(1.05);
+}
+
+.separator {
+    height: 2px;
+    background: #e0e0e0;
+    margin: 1.5rem 0;
+    border-radius: 1px;
+}
+
+.inputs-list {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-item {
+    background: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid #4CAF50;
+    transition: all 0.3s ease;
+}
+
+.input-item:hover {
+    background: #e9ecef;
+    transform: translateX(4px);
+}
+
+.input-item .text {
+    flex: 1;
+    margin-right: 1rem;
+}
+
+.remove-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.remove-btn:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.panel-footer {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .inputs-panel {
+        width: 100%;
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .wheel-container {
+        padding: 1rem;
+    }
+    
+    #wheelCanvas {
+        width: 360px;
+        height: 360px;
+    }
+    
+    .spin-button {
+        width: 72px;
+        height: 72px;
+    }
+    
+    .spin-button span {
+        font-size: 0.8rem;
+    }
+}
+
+/* Animation for spinning */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinning {
+    animation: spin 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Empty state styling */
+.inputs-list:empty::after {
+    content: "Add some options to get started!";
+    color: #999;
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+}
+
+/* Coin Flipper */
+.coin-3d {
+    perspective: 1200px;
+    display: inline-block;
+}
+
+.coin-wrapper {
+    display: inline-block;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: #f06292;
+    padding: 18px;
+    box-shadow: inset 0 0 0 8px rgba(255,255,255,0.5), 0 8px 20px rgba(0,0,0,0.12);
+    transform-style: preserve-3d;
+    transition: transform 0.2s ease;
+}
+
+.coin-wrapper.throwing {
+    animation: coinTossZoom 1.6s ease-in-out; /* sync with coinFlip */
+}
+
+.coin {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #ec4899;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 900;
+    font-size: 72px;
+    letter-spacing: 3px;
+    user-select: none;
+    transition: transform 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.coin.flipping {
+    animation: coinFlip 1.6s ease-in-out;
+}
+
+.coin-face { pointer-events: none; transform: translateZ(8px); }
+
+@keyframes coinFlip {
+    0% { transform: rotateX(0deg) scale(1); }
+    20% { transform: rotateX(360deg) scale(1.06); }
+    60% { transform: rotateX(900deg) scale(1.02); }
+    100% { transform: rotateX(1440deg) scale(1); }
+}
+
+@keyframes coinTossZoom {
+    0%   { transform: translateY(0) scale(1); }
+    40%  { transform: translateY(-40px) scale(1.12); }
+    70%  { transform: translateY(-10px) scale(1.04); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+/* Tools page grid and big cards */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.tool-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 16px;
+    padding: 18px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.tool-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    border-color: #dcdcdc;
+}
+
+.tool-thumb {
+    flex: 0 0 72px;
+    height: 72px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f5f7fa, #eaeef4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+}
+
+.tool-body {
+    display: grid;
+    gap: 6px;
+}
+
+.tool-title {
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.tool-desc {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Dark theme removed */
+
+@media (max-width: 768px) {
+    .tool-card { padding: 16px; }
+    .tool-thumb { flex-basis: 60px; height: 60px; font-size: 30px; }
+}
+
+
+
+

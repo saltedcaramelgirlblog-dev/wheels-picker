@@ -20,6 +20,17 @@ const Header = ({ siteTitle }) => (
     >
       {siteTitle}
     </Link>
+    <nav>
+      <Link
+        to="/tools"
+        style={{
+          fontSize: `var(--font-sm)`,
+          textDecoration: `none`,
+        }}
+      >
+        Tools
+      </Link>
+    </nav>
     <img
       alt="Gatsby logo"
       height={20}
