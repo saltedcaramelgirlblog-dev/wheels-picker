@@ -980,7 +980,6 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
                   id="inputField"
                   type="text"
                   placeholder="Input text here..."
-                  maxLength={50}
                   value={newInput}
                   onChange={(e) => setNewInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && addInput()}
