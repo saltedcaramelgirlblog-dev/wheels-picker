@@ -32,5 +32,8 @@
   "overrides": {
     "msgpackr": "^1.10.2",
     "lmdb": "^3.1.5"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
