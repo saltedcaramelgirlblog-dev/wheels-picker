@@ -13,6 +13,10 @@ const IndexPage = () => {
   )
 }
 
-export const Head = () => <Seo title="Wheels Picker" />
+export const Head = () => (
+  <Seo title="Wheels Picker">
+    <meta name="google-site-verification" content="hCFUo9BnoLBOReZaSCMOKJiVzCPPX0scHk3Sdfhntb4" />
+  </Seo>
+)
 
 export default IndexPage
