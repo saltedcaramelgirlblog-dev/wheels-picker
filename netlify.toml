@@ -9,5 +9,7 @@
   # functions target differ from the build machine platform/arch.
   GATSBY_FUNCTIONS_PLATFORM = "darwin"
   GATSBY_FUNCTIONS_ARCH = "arm64"
+  # Set in Netlify UI for production GA4 tracking
+  # GATSBY_GA_MEASUREMENT_ID = "G-XXXXXXXXXX"
 
 

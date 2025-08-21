@@ -24,6 +24,21 @@ module.exports = {
     `gatsby-plugin-image`,
     `gatsby-plugin-sitemap`,
     {
+      resolve: `gatsby-plugin-google-gtag`,
+      options: {
+        // GA4 Measurement ID provided via environment
+        trackingIds: [process.env.GATSBY_GA_MEASUREMENT_ID].filter(Boolean),
+        gtagConfig: {
+          anonymize_ip: true,
+          cookie_flags: "SameSite=None;Secure",
+        },
+        pluginConfig: {
+          head: true,
+          respectDNT: true,
+        },
+      },
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `images`,
