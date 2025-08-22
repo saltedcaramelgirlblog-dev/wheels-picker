@@ -30,20 +30,21 @@ function Seo({ description, title, children, keywords, pathname }) {
   const siteUrl = site.siteMetadata?.siteUrl || ''
   const canonical = pathname ? `${siteUrl}${pathname}` : null
   const metaKeywords = keywords || site.siteMetadata?.keywords
+  const metaTitle = title ? (defaultTitle ? `${title} | ${defaultTitle}` : title) : defaultTitle
 
   return (
     <>
-      <title>{defaultTitle ? `${title} | ${defaultTitle}` : title}</title>
+      <title>{metaTitle}</title>
       <meta name="description" content={metaDescription} />
       {metaKeywords && <meta name="keywords" content={metaKeywords} />}
       {canonical && <link rel="canonical" href={canonical} />}
-      <meta property="og:title" content={title} />
+      <meta property="og:title" content={metaTitle || ''} />
       <meta property="og:description" content={metaDescription} />
       <meta property="og:type" content="website" />
       {canonical && <meta property="og:url" content={canonical} />}
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:creator" content={site.siteMetadata?.author || ``} />
-      <meta name="twitter:title" content={title} />
+      <meta name="twitter:title" content={metaTitle || ''} />
       <meta name="twitter:description" content={metaDescription} />
       {children}
     </>
