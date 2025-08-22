@@ -14,7 +14,7 @@ const IndexPage = () => {
 }
 
 export const Head = () => (
-  <Seo title="Wheels Picker" pathname="/">
+  <Seo pathname="/">
     <meta name="google-site-verification" content="hCFUo9BnoLBOReZaSCMOKJiVzCPPX0scHk3Sdfhntb4" />
   </Seo>
 )
