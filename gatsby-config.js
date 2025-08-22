@@ -10,15 +10,16 @@
 const netlifyAdapter = (require("gatsby-adapter-netlify").default || require("gatsby-adapter-netlify"))
 
 // Hardcode canonical site URL
-const siteUrl = "https://www.wheelspicker.com"
+const siteUrl = "https://wheelspicker.com"
 
 module.exports = {
   adapter: netlifyAdapter(),
   siteMetadata: {
-    title: `Wheels Picker`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
+    title: `Wheels Picker - Turn the Wheels and make a decision on a random choice`,
+    description: `Wheels Picker is a fun random spinner that helps you make quick decisions. Just add your choices or names, spin the wheel, and let fate choose the result.`,
     author: `@gatsbyjs`,
     siteUrl,
+    keywords: `picker wheel,random picker wheel,random name picker wheel,name picker wheel,random name picker,wheel spin,pickerwheel,spin wheel,wheel decide,wheel of names,spin the wheel,random name picker,wheel spinner,random wheel,randomizer wheel,spinner wheel,spinning wheel,random picker`,
   },
   plugins: [
     `gatsby-plugin-image`,
