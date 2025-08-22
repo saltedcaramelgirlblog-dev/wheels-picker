@@ -26,8 +26,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-gtag`,
       options: {
-        // GA4 Measurement ID provided via environment
-        trackingIds: [process.env.GATSBY_GA_MEASUREMENT_ID].filter(Boolean),
+        // GA4 Measurement ID (hardcoded)
+        trackingIds: ["G-MCEY12RWN0"],
         gtagConfig: {
           anonymize_ip: true,
           cookie_flags: "SameSite=None;Secure",
