@@ -15,12 +15,10 @@ const siteUrl = "https://www.wheelspicker.com"
 module.exports = {
   adapter: netlifyAdapter(),
   siteMetadata: {
-    title: `Wheels Picker - Spin the wheels and make a random decision`,
-    description: `Wheels Picker is a fun random spinner that helps you make quick decisions. Just add your choices or names, spin the wheel, and let fate choose the result.`,
-    author: `Wheels Picker`,
+    title: `Wheels Picker`,
+    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
+    author: `@gatsbyjs`,
     siteUrl,
-    image: `/icons/icon-512x512.png`,
-    keywords: `picker wheel,random picker wheel,random name picker wheel,name picker wheel,random name picker,wheel spin,pickerwheel,spin wheel,wheel decide,wheel of names,spin the wheel,random name picker,wheel spinner,random wheel,randomizer wheel,spinner wheel,spinning wheel,random picker`,
   },
   plugins: [
     `gatsby-plugin-image`,
@@ -60,7 +58,7 @@ module.exports = {
         // https://css-tricks.com/meta-theme-color-and-trickery/
         // theme_color: `#663399`,
         display: `minimal-ui`,
-        icon: `src/images/wheels-picker-icon-512.png`, // This path is relative to the root of the site.
+        icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
       },
     },
     {
