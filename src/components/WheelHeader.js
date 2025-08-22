@@ -39,11 +39,11 @@ const WheelHeader = () => {
   const data = useStaticQuery(graphql`
     query WheelHeaderSiteTitleQuery {
       site {
-        siteMetadata { title }
+        siteMetadata { title shortTitle }
       }
     }
   `)
-  const siteTitle = data?.site?.siteMetadata?.title || "Wheels Picker"
+  const siteTitle = data?.site?.siteMetadata?.shortTitle || "Wheels Picker"
 
   React.useEffect(() => {
     const onDocClick = (e) => {

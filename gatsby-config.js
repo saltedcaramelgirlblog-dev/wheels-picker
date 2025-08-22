@@ -16,6 +16,7 @@ module.exports = {
   adapter: netlifyAdapter(),
   siteMetadata: {
     title: `Wheels Picker - Turn the Wheels and make a decision on a random choice`,
+    shortTitle: `Wheels Picker`,
     description: `Wheels Picker is a fun random spinner that helps you make quick decisions. Just add your choices or names, spin the wheel, and let fate choose the result.`,
     author: `@gatsbyjs`,
     siteUrl,

@@ -7,10 +7,10 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
   const canvasRef = React.useRef(null)
   const data = useStaticQuery(graphql`
     query PickerWheelSiteTitleQuery {
-      site { siteMetadata { title } }
+      site { siteMetadata { title shortTitle } }
     }
   `)
-  const siteTitle = data?.site?.siteMetadata?.title || "Wheels Picker"
+  const siteTitle = data?.site?.siteMetadata?.shortTitle || "Wheels Picker"
   const inputsRef = React.useRef(
     initialInputs && initialInputs.length
       ? initialInputs
