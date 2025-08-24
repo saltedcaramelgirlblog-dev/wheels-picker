@@ -683,7 +683,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: "rgba(0,0,0,0.0)",
+              background: "rgba(0,0,0,0.25)",
               zIndex: 1000,
             }}
           >
@@ -697,21 +697,25 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
                 boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
                 textAlign: "center",
                 minWidth: 300,
+                borderTop: "6px solid #0A9396",
               }}
             >
-              <h2 style={{ color: "#2E7D32", marginBottom: "1rem" }}>🎉 Result!</h2>
+              <h2 style={{ color: "#0A9396", marginBottom: "1rem" }}>🎉 Result!</h2>
               <p style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1rem" }}>{resultText}</p>
               <button
                 onClick={closeResult}
                 style={{
-                  background: "#4CAF50",
+                  background: "#F77F00",
                   color: "white",
                   border: "none",
                   padding: "0.75rem 1.5rem",
                   borderRadius: 8,
                   cursor: "pointer",
                   fontSize: "1rem",
+                  boxShadow: "0 6px 14px rgba(247,127,0,0.3)",
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#FFB703")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#F77F00")}
               >
                 OK
               </button>
@@ -1022,7 +1026,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "rgba(0,0,0,0.0)",
+            background: "rgba(0,0,0,0.25)",
             zIndex: 1000,
           }}
         >
@@ -1036,21 +1040,25 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
               boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
               textAlign: "center",
               minWidth: 300,
+              borderTop: "6px solid #0A9396",
             }}
           >
-            <h2 style={{ color: "#2E7D32", marginBottom: "1rem" }}>🎉 Result!</h2>
+            <h2 style={{ color: "#0A9396", marginBottom: "1rem" }}>🎉 Result!</h2>
             <p style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1rem" }}>{resultText}</p>
             <button
               onClick={closeResult}
               style={{
-                background: "#4CAF50",
+                background: "#F77F00",
                 color: "white",
                 border: "none",
                 padding: "0.75rem 1.5rem",
                 borderRadius: 8,
                 cursor: "pointer",
                 fontSize: "1rem",
+                boxShadow: "0 6px 14px rgba(247,127,0,0.3)",
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#FFB703")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "#F77F00")}
             >
               OK
             </button>
