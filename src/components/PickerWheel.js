@@ -1,7 +1,14 @@
 import * as React from "react"
 import { Link, useStaticQuery, graphql } from "gatsby"
 
-const COLORS = ["#2E7D32", "#FFD54F", "#8BC34A", "#FF9800"]
+const COLORS = [
+  "#003049", // navy
+  "#0A9396", // teal
+  "#94D2BD", // light aqua
+  "#FFB703", // yellow
+  "#F77F00", // orange
+  "#D62828", // red
+]
 
 export default function PickerWheel({ initialInputs, title, subtitle, variant, onResult, inputs: controlledInputs, hideHeader, hideInputsPanel, renderOnlyWheel, autoConfetti = true, confettiDurationMs = 1200, stopConfettiOnUnmount = true, showWatermarkOnLoad = false, watermarkText = "Press to Spin" } = {}) {
   const canvasRef = React.useRef(null)
