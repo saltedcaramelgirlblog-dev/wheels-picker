@@ -204,32 +204,18 @@ const RandomNumberGeneratorPage = () => {
               <div style={{ fontWeight: 800, marginBottom: 8 }}>INPUTS</div>
 
               <div style={{ marginBottom: 8, fontWeight: 700 }}>Mode:</div>
-              <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+              <div className="mode-toggle" style={{ display: "flex", gap: 12, marginBottom: 16 }}>
                 <button
                   onClick={() => setMode("number")}
-                  style={{
-                    flex: 1,
-                    padding: "12px 14px",
-                    borderRadius: 8,
-                    border: mode === "number" ? "2px solid #1b5e20" : "1px solid #ccc",
-                    background: mode === "number" ? "#e8f5e9" : "#fff",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
+                  className={`mode-btn ${mode === 'number' ? 'selected' : ''}`}
+                  style={{ flex: 1, padding: "12px 14px", borderRadius: 8 }}
                 >
                   Random Number
                 </button>
                 <button
                   onClick={() => setMode("digits")}
-                  style={{
-                    flex: 1,
-                    padding: "12px 14px",
-                    borderRadius: 8,
-                    border: mode === "digits" ? "2px solid #333" : "1px solid #ccc",
-                    background: mode === "digits" ? "#f7f7f7" : "#fff",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
+                  className={`mode-btn ${mode === 'digits' ? 'selected' : ''}`}
+                  style={{ flex: 1, padding: "12px 14px", borderRadius: 8 }}
                 >
                   Random Digits
                 </button>
@@ -238,16 +224,18 @@ const RandomNumberGeneratorPage = () => {
               {mode === "number" && (
                 <>
                   <div style={{ marginBottom: 8, fontWeight: 700 }}>Input Method:</div>
-                  <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+                  <div className="method-toggle" style={{ display: "flex", gap: 12, marginBottom: 16 }}>
                     <button
                       onClick={() => setNumberMethod("range")}
-                      style={{ flex: 1, padding: "12px 14px", borderRadius: 8, border: numberMethod === 'range' ? "2px solid #333" : "1px solid #ccc", background: numberMethod === 'range' ? "#eee" : "#fff", fontWeight: 700, cursor: 'pointer' }}
+                      className={`method-btn ${numberMethod === 'range' ? 'selected' : ''}`}
+                      style={{ flex: 1, padding: "12px 14px", borderRadius: 8 }}
                     >
                       By Range
                     </button>
                     <button
                       onClick={() => setNumberMethod("formula")}
-                      style={{ flex: 1, padding: "12px 14px", borderRadius: 8, border: numberMethod === 'formula' ? "2px solid #333" : "1px solid #ccc", background: numberMethod === 'formula' ? "#333" : "#fff", color: numberMethod === 'formula' ? '#fff' : 'inherit', fontWeight: 700, cursor: 'pointer' }}
+                      className={`method-btn ${numberMethod === 'formula' ? 'selected' : ''}`}
+                      style={{ flex: 1, padding: "12px 14px", borderRadius: 8 }}
                     >
                       By Formula
                     </button>
@@ -304,7 +292,7 @@ const RandomNumberGeneratorPage = () => {
                       placeholder={"Try: 1,2,3,(10;20),(30;2;40)"}
                       style={{ width: '100%', minHeight: 160, padding: 12, borderRadius: 10, border: '1px solid #e5e5e5', background: '#f7f7f7' }}
                     />
-                    <button onClick={processFormula} style={{ width: 160, justifySelf: 'end', padding: '10px 14px', borderRadius: 10, border: '1px solid #eab308', background: '#FFB703', color: '#111827', fontWeight: 900, cursor: 'pointer' }}>Process</button>
+                    <button onClick={processFormula} className="primary-btn" style={{ width: 160, justifySelf: 'end' }}>Process</button>
                   </div>
                   <div style={{ color: '#6b7280', fontSize: 12 }}>* Click the tips ⓘ to learn more about the formula</div>
                 </>
@@ -366,8 +354,8 @@ const RandomNumberGeneratorPage = () => {
                     </div>
                   </div>
                   <div style={{ color: "#666", fontSize: 12, marginBottom: 10 }}>*Wheel spins {digitsCount} times and builds the number from rightmost (1st) to leftmost.</div>
-                  <button onClick={startDigitsPicking} style={{ width: '100%', padding: '14px 16px', fontWeight: 900, background: '#fde68a', color: '#111827', border: '1px solid #eab308', borderRadius: 10, cursor: 'pointer', boxShadow: 'inset 0 -2px 0 rgba(0,0,0,0.05)' }}>START</button>
-                  <button onClick={resetDigitsToDefaults} style={{ width: '100%', marginTop: 8, padding: '10px 12px', fontWeight: 700, background: '#fff', color: '#0A9396', border: '1px solid #d1d5db', borderRadius: 10, cursor: 'pointer' }}>Reset</button>
+                  <button onClick={startDigitsPicking} className="primary-btn" style={{ width: '100%' }}>START</button>
+                  <button onClick={resetDigitsToDefaults} className="secondary-btn" style={{ width: '100%', marginTop: 8 }}>Reset</button>
                 </>
               )}
             </div>
