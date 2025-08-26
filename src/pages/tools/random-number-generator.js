@@ -301,7 +301,7 @@ const RandomNumberGeneratorPage = () => {
                     <textarea
                       value={formulaText}
                       onChange={(e)=>setFormulaText(e.target.value)}
-                      placeholder={"Try: 1,2,3,(10;15),(20;2;30)"}
+                      placeholder={"Try: 1,2,3,(10;20),(30;2;40)"}
                       style={{ width: '100%', minHeight: 160, padding: 12, borderRadius: 10, border: '1px solid #e5e5e5', background: '#f7f7f7' }}
                     />
                     <button onClick={processFormula} style={{ width: 160, justifySelf: 'end', padding: '10px 14px', borderRadius: 10, border: '1px solid #eab308', background: '#FFB703', color: '#111827', fontWeight: 900, cursor: 'pointer' }}>Process</button>
