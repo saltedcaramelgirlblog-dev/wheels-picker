@@ -7,9 +7,13 @@ import "../../styles/picker.css"
 
 const RandomNumberGeneratorPage = () => {
   const [mode, setMode] = React.useState("number") // "number" | "digits"
+  // Range mode state
   const [min, setMin] = React.useState(1)
   const [max, setMax] = React.useState(10)
   const [interval, setIntervalStep] = React.useState(1)
+  const [numberMethod, setNumberMethod] = React.useState("range") // "range" | "formula"
+  const [formulaText, setFormulaText] = React.useState("1,2,3,(10;15),(20;2;30)")
+  const [formulaNumbers, setFormulaNumbers] = React.useState([])
   const [digitsCount, setDigitsCount] = React.useState(4)
   const [digitRanges, setDigitRanges] = React.useState(() => Array.from({ length: 4 }, () => ({ from: 0, to: 9 })))
 
@@ -41,7 +45,59 @@ const RandomNumberGeneratorPage = () => {
     return list
   }, [])
 
-  const numbers = mode === "digits" ? buildDigitsList() : buildRangeNumbers()
+  const numbers = mode === "digits" ? buildDigitsList() : (numberMethod === "formula" ? formulaNumbers : buildRangeNumbers())
+
+  // --- Formula parsing ---
+  const processFormula = React.useCallback(() => {
+    const out = []
+    const limit = 1000
+    const text = String(formulaText || "").trim()
+    if (!text) { setFormulaNumbers([]); return }
+
+    // split by commas, ignoring commas inside parentheses
+    const parts = []
+    let buf = ""
+    let depth = 0
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i]
+      if (ch === '(') { depth++; buf += ch; continue }
+      if (ch === ')') { depth = Math.max(0, depth - 1); buf += ch; continue }
+      if (ch === ',' && depth === 0) { parts.push(buf.trim()); buf = ""; continue }
+      buf += ch
+    }
+    if (buf.trim()) parts.push(buf.trim())
+
+    const add = (n) => {
+      if (out.length < limit) out.push(String(n))
+    }
+
+    for (const token of parts) {
+      if (!token) continue
+      if (token.startsWith('(') && token.endsWith(')')) {
+        const inner = token.slice(1, -1)
+        const nums = inner.split(';').map((s) => parseInt(s.trim() || '0', 10))
+        if (nums.length === 2) {
+          let [a, b] = nums
+          if (Number.isFinite(a) && Number.isFinite(b)) {
+            const step = a <= b ? 1 : -1
+            for (let v = a; step > 0 ? v <= b : v >= b; v += step) add(v)
+          }
+        } else if (nums.length === 3) {
+          let [a, stepRaw, b] = nums
+          if (Number.isFinite(a) && Number.isFinite(stepRaw) && Number.isFinite(b) && stepRaw !== 0) {
+            const step = stepRaw
+            for (let v = a; step > 0 ? v <= b : v >= b; v += step) { add(v); if (out.length >= limit) break }
+          }
+        }
+      } else {
+        const v = parseInt(token, 10)
+        if (Number.isFinite(v)) add(v)
+      }
+      if (out.length >= limit) break
+    }
+
+    setFormulaNumbers(out)
+  }, [formulaText])
 
   // ----- DIGITS MODE (sequential spins) -----
   const [digitsResults, setDigitsResults] = React.useState([]) // index 0 => 1st (ones)
@@ -183,13 +239,23 @@ const RandomNumberGeneratorPage = () => {
                 <>
                   <div style={{ marginBottom: 8, fontWeight: 700 }}>Input Method:</div>
                   <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-                    <button style={{ flex: 1, padding: "12px 14px", borderRadius: 8, border: "2px solid #333", background: "#fff", fontWeight: 700 }}>By Range</button>
-                    <button style={{ flex: 1, padding: "12px 14px", borderRadius: 8, border: "1px solid #ccc", background: "#fff", fontWeight: 700 }}>By Formula</button>
+                    <button
+                      onClick={() => setNumberMethod("range")}
+                      style={{ flex: 1, padding: "12px 14px", borderRadius: 8, border: numberMethod === 'range' ? "2px solid #333" : "1px solid #ccc", background: numberMethod === 'range' ? "#eee" : "#fff", fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      By Range
+                    </button>
+                    <button
+                      onClick={() => setNumberMethod("formula")}
+                      style={{ flex: 1, padding: "12px 14px", borderRadius: 8, border: numberMethod === 'formula' ? "2px solid #333" : "1px solid #ccc", background: numberMethod === 'formula' ? "#333" : "#fff", color: numberMethod === 'formula' ? '#fff' : 'inherit', fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      By Formula
+                    </button>
                   </div>
                 </>
               )}
 
-              {mode === "number" && (
+              {mode === "number" && numberMethod === 'range' && (
                 <>
                   <div style={{ marginBottom: 8, fontWeight: 700 }}>Range:</div>
                   <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 8, flexWrap: "wrap" }}>
@@ -225,6 +291,22 @@ const RandomNumberGeneratorPage = () => {
 
                   <div style={{ fontWeight: 700, marginBottom: 6 }}>Exclude: <span style={{ fontWeight: 400, color: "#777" }}>E.g. 2,5,8</span></div>
                   <input type="text" placeholder="Numbers to be excluded (separated by comma ,)" style={{ width: "100%", padding: 10, borderRadius: 6, border: "1px solid #ddd" }} />
+                </>
+              )}
+
+              {mode === "number" && numberMethod === 'formula' && (
+                <>
+                  <div style={{ marginBottom: 8, fontWeight: 700 }}>Formula:</div>
+                  <div style={{ display: 'grid', gap: 8, marginBottom: 8 }}>
+                    <textarea
+                      value={formulaText}
+                      onChange={(e)=>setFormulaText(e.target.value)}
+                      placeholder={"E.g. 1,2,3,(10;15),(20;2;30)"}
+                      style={{ width: '100%', minHeight: 160, padding: 12, borderRadius: 10, border: '1px solid #e5e5e5', background: '#f7f7f7' }}
+                    />
+                    <button onClick={processFormula} style={{ width: 160, justifySelf: 'end', padding: '10px 14px', borderRadius: 10, border: '1px solid #eab308', background: '#FFB703', color: '#111827', fontWeight: 900, cursor: 'pointer' }}>Process</button>
+                  </div>
+                  <div style={{ color: '#6b7280', fontSize: 12 }}>* Click the tips ⓘ to learn more about the formula</div>
                 </>
               )}
 
