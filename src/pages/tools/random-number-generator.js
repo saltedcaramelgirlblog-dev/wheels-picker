@@ -12,7 +12,7 @@ const RandomNumberGeneratorPage = () => {
   const [max, setMax] = React.useState(10)
   const [interval, setIntervalStep] = React.useState(1)
   const [numberMethod, setNumberMethod] = React.useState("range") // "range" | "formula"
-  const [formulaText, setFormulaText] = React.useState("1,2,3,(10;15),(20;2;30)")
+  const [formulaText, setFormulaText] = React.useState("")
   const [formulaNumbers, setFormulaNumbers] = React.useState([])
   const [digitsCount, setDigitsCount] = React.useState(4)
   const [digitRanges, setDigitRanges] = React.useState(() => Array.from({ length: 4 }, () => ({ from: 0, to: 9 })))
@@ -301,7 +301,7 @@ const RandomNumberGeneratorPage = () => {
                     <textarea
                       value={formulaText}
                       onChange={(e)=>setFormulaText(e.target.value)}
-                      placeholder={"E.g. 1,2,3,(10;15),(20;2;30)"}
+                      placeholder={"Try: 1,2,3,(10;15),(20;2;30)"}
                       style={{ width: '100%', minHeight: 160, padding: 12, borderRadius: 10, border: '1px solid #e5e5e5', background: '#f7f7f7' }}
                     />
                     <button onClick={processFormula} style={{ width: 160, justifySelf: 'end', padding: '10px 14px', borderRadius: 10, border: '1px solid #eab308', background: '#FFB703', color: '#111827', fontWeight: 900, cursor: 'pointer' }}>Process</button>
