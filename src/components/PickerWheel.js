@@ -66,6 +66,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
   const isYesNoVariant = variant === "yesno"
   const [yesCount, setYesCount] = React.useState(0)
   const [noCount, setNoCount] = React.useState(0)
+  const [maybeCount, setMaybeCount] = React.useState(0)
   const [mode, setMode] = React.useState("yesno") // "yesno" | "yesnomaybe"
   const [inputSets, setInputSets] = React.useState(4)
 
@@ -117,7 +118,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
     return () => document.removeEventListener("click", onDocClick)
   }, [])
 
-  const colors = ["#2E7D32", "#FFD54F", "#8BC34A", "#FF9800"]
+  
 
   // --- Wheels (presets) management ---
   const [wheels, setWheels] = React.useState(() => {
@@ -299,7 +300,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
       ctx.lineTo(-8, 15)
       ctx.lineTo(8, 15)
       ctx.closePath()
-      ctx.fillStyle = "#FF5722"
+      ctx.fillStyle = "#F77F00"
       ctx.fill()
       ctx.strokeStyle = "#fff"
       ctx.lineWidth = 2
@@ -456,6 +457,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
           const t = String(text).toUpperCase()
           if (t === "YES") setYesCount((c) => c + 1)
           if (t === "NO") setNoCount((c) => c + 1)
+          if (t === "MAYBE") setMaybeCount((c) => c + 1)
         }
         setShowResult(true)
         if (autoConfetti) startConfetti(confettiDurationMs)
@@ -502,7 +504,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
     const onResize = () => resize()
     window.addEventListener("resize", onResize)
 
-    const colorsList = ["#E91E63", "#9C27B0", "#3F51B5", "#2196F3", "#009688", "#4CAF50", "#FF9800", "#FFC107", "#FF5722"]
+    const colorsList = ["#003049", "#0A9396", "#94D2BD", "#FFB703", "#F77F00", "#D62828"]
     const gravity = 0.18
     const drag = 0.994
     const wind = 0.02
@@ -908,15 +910,21 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
           <div className="inputs-panel">
             {isYesNoVariant && (
               <div style={{ marginBottom: 16 }}>
-                <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
-                  <div style={{ flex: 1, background: "#1b5e20", color: "#fff", borderRadius: 12, padding: 16, textAlign: "center" }}>
+                <div style={{ display: "grid", gridTemplateColumns: mode === "yesnomaybe" ? "repeat(3, 1fr)" : "repeat(2, 1fr)", gap: 16, marginBottom: 16 }}>
+                  <div style={{ flex: 1, background: "#0A9396", color: "#fff", borderRadius: 12, padding: 16, textAlign: "center" }}>
                     <div style={{ fontSize: 56, fontWeight: 800, lineHeight: 1 }}>{yesCount}</div>
                     <div style={{ fontWeight: 700, marginTop: 6 }}>YES</div>
                   </div>
-                  <div style={{ flex: 1, background: "#f0ad0c", color: "#000", borderRadius: 12, padding: 16, textAlign: "center" }}>
+                  <div style={{ flex: 1, background: "#FFB703", color: "#000", borderRadius: 12, padding: 16, textAlign: "center" }}>
                     <div style={{ fontSize: 56, fontWeight: 800, lineHeight: 1 }}>{noCount}</div>
                     <div style={{ fontWeight: 700, marginTop: 6 }}>NO</div>
                   </div>
+                  {mode === "yesnomaybe" && (
+                    <div style={{ flex: 1, background: "#94D2BD", color: "#003049", borderRadius: 12, padding: 16, textAlign: "center" }}>
+                      <div style={{ fontSize: 56, fontWeight: 800, lineHeight: 1 }}>{maybeCount}</div>
+                      <div style={{ fontWeight: 700, marginTop: 6 }}>MAYBE</div>
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ background: "#fff", border: "1px solid #e5e5e5", borderRadius: 12, padding: 12, marginBottom: 16 }}>
@@ -928,8 +936,8 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
                         flex: 1,
                         padding: "12px 14px",
                         borderRadius: 8,
-                        border: mode === "yesno" ? "2px solid #1b5e20" : "1px solid #ccc",
-                        background: mode === "yesno" ? "#e8f5e9" : "#fff",
+                        border: mode === "yesno" ? "2px solid #0A9396" : "1px solid #ccc",
+                        background: mode === "yesno" ? "#94D2BD" : "#fff",
                         fontWeight: 700,
                         cursor: "pointer",
                       }}
@@ -942,8 +950,8 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
                         flex: 1,
                         padding: "12px 14px",
                         borderRadius: 8,
-                        border: mode === "yesnomaybe" ? "2px solid #333" : "1px solid #ccc",
-                        background: mode === "yesnomaybe" ? "#f7f7f7" : "#fff",
+                        border: mode === "yesnomaybe" ? "2px solid #003049" : "1px solid #ccc",
+                        background: mode === "yesnomaybe" ? "#E6EEF2" : "#fff",
                         fontWeight: 700,
                         cursor: "pointer",
                       }}
@@ -961,8 +969,8 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
                           width: 72,
                           padding: "10px 0",
                           borderRadius: 8,
-                          border: inputSets === n ? "2px solid #333" : "1px solid #ccc",
-                          background: inputSets === n ? "#eee" : "#fff",
+                          border: inputSets === n ? "2px solid #003049" : "1px solid #ccc",
+                          background: inputSets === n ? "#94D2BD" : "#fff",
                           fontWeight: 700,
                           cursor: "pointer",
                         }}
