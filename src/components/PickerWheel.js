@@ -50,6 +50,8 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
   const [soundEnabled, setSoundEnabled] = React.useState(true)
   const [resultText, setResultText] = React.useState("")
   const [showResult, setShowResult] = React.useState(false)
+  const [resultsHistory, setResultsHistory] = React.useState([])
+  const [showHistory, setShowHistory] = React.useState(false)
   const confettiRef = React.useRef(null)
   const audioCtxRef = React.useRef(null)
   const resultAudioRef = React.useRef(null)
@@ -453,6 +455,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
         const idx = Math.floor(rel / seg) % inputs.length
         const text = inputs[idx]
         setResultText(text)
+        setResultsHistory((prev) => [{ text, timestamp: Date.now() }, ...prev])
         if (typeof onResult === "function") {
           try { onResult(text) } catch (e) {}
         }
@@ -666,6 +669,10 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
     stopConfetti()
   }
 
+  const closeHistory = () => {
+    setShowHistory(false)
+  }
+
   // Close result popup with Enter key when visible
   React.useEffect(() => {
     if (typeof window === "undefined") return
@@ -721,7 +728,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
         <button className="control-btn" onClick={() => setSoundEnabled((v) => !v)} title={soundEnabled ? "Sound On" : "Sound Off"}>
           <span role="img" aria-label="sound">{soundEnabled ? "🔊" : "🔇"}</span>
         </button>
-        <button className="control-btn" onClick={() => alert("Results history feature coming soon!")}>🏆</button>
+        <button className="control-btn" onClick={() => setShowHistory(true)} title="Results History">🏆</button>
       </div>
     </div>
   )
@@ -777,6 +784,65 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
               >
                 OK
               </button>
+            </div>
+          </div>
+        )}
+        {showHistory && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(0,0,0,0.25)",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              style={{
+                background: "white",
+                padding: "1.5rem",
+                borderRadius: 16,
+                boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+                minWidth: 320,
+                maxWidth: 520,
+                width: "90%",
+                borderTop: "6px solid #0A9396",
+              }}
+            >
+              <h2 style={{ color: "#0A9396", marginBottom: 12 }}>🏆 Results History</h2>
+              {resultsHistory.length === 0 ? (
+                <p style={{ marginBottom: 12 }}>No results yet.</p>
+              ) : (
+                <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: 300, overflowY: "auto" }}>
+                  {resultsHistory.map((r, i) => (
+                    <li key={i} style={{ padding: "8px 10px", borderBottom: "1px solid #eee", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                      <span style={{ fontWeight: 700 }}>{r.text}</span>
+                      {r.timestamp ? <span style={{ color: "#777", fontSize: 12 }}>{new Date(r.timestamp).toLocaleString()}</span> : null}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
+                <button
+                  onClick={() => setResultsHistory([])}
+                  style={{ background: "#eee", border: "1px solid #ddd", padding: "8px 12px", borderRadius: 8, cursor: "pointer" }}
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={closeHistory}
+                  style={{ background: "#0A9396", color: "white", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer" }}
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1125,6 +1191,65 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
             >
               OK
             </button>
+          </div>
+        </div>
+      )}
+      {showHistory && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(0,0,0,0.25)",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            style={{
+              background: "white",
+              padding: "1.5rem",
+              borderRadius: 16,
+              boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+              minWidth: 320,
+              maxWidth: 600,
+              width: "90%",
+              borderTop: "6px solid #0A9396",
+            }}
+          >
+            <h2 style={{ color: "#0A9396", marginBottom: 12 }}>🏆 Results History</h2>
+            {resultsHistory.length === 0 ? (
+              <p style={{ marginBottom: 12 }}>No results yet.</p>
+            ) : (
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, maxHeight: 360, overflowY: "auto" }}>
+                {resultsHistory.map((r, i) => (
+                  <li key={i} style={{ padding: "8px 10px", borderBottom: "1px solid #eee", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <span style={{ fontWeight: 700 }}>{r.text}</span>
+                    {r.timestamp ? <span style={{ color: "#777", fontSize: 12 }}>{new Date(r.timestamp).toLocaleString()}</span> : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
+              <button
+                onClick={() => setResultsHistory([])}
+                style={{ background: "#eee", border: "1px solid #ddd", padding: "8px 12px", borderRadius: 8, cursor: "pointer" }}
+              >
+                Clear
+              </button>
+              <button
+                onClick={closeHistory}
+                style={{ background: "#0A9396", color: "white", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer" }}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
