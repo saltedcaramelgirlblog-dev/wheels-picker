@@ -59,8 +59,7 @@ const WheelHeader = () => {
   return (
     <header className="header">
       <Link to="/" className="logo" style={{ textDecoration: "none", color: "inherit" }}>
-        <div className="wheel-icon">🎯</div>
-        <h1>{siteTitle}</h1>
+        <img src={require("../images/wheels-picker-icon-200.png").default} alt="Wheels Picker" width={200} height={70} style={{ display: "block" }} />
       </Link>
       <nav className="nav">
         <button className="nav-btn">Settings</button>

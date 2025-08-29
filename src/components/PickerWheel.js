@@ -1,5 +1,7 @@
 import * as React from "react"
 import { Link, useStaticQuery, graphql } from "gatsby"
+import wheelLogo from "../images/wheels-picker-icon-200.png"
+import resultSfx from "../sounds/Anime WOW - Sound Effect (HD).mp3"
 
 const COLORS = [
   "#003049", // navy
@@ -50,6 +52,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
   const [showResult, setShowResult] = React.useState(false)
   const confettiRef = React.useRef(null)
   const audioCtxRef = React.useRef(null)
+  const resultAudioRef = React.useRef(null)
   const lastTickIndexRef = React.useRef(-1)
   const nextTickAllowedTimeRef = React.useRef(0)
   const tickDelayMsRef = React.useRef(450)
@@ -467,6 +470,25 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
     requestAnimationFrame(tick)
   }, [isSpinning, inputs.length, rotation, playTick, playCenterClick, startIdleSpin, stopIdleSpin, inputs, onResult, isYesNoVariant, autoConfetti, confettiDurationMs])
 
+  // Global keyboard shortcut: Cmd+Enter (macOS) or Ctrl+Enter (Windows) to spin
+  React.useEffect(() => {
+    if (typeof window === "undefined") return
+    const onKeyDown = (e) => {
+      if (e.key !== "Enter") return
+      const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad|iPod/.test(navigator.platform)
+      // Avoid triggering while typing in inputs/contenteditable
+      const t = e.target
+      const isTypingTarget = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)
+      if (isTypingTarget) return
+      if ((isMac && e.metaKey) || (!isMac && e.ctrlKey)) {
+        e.preventDefault()
+        spin()
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [spin])
+
   const addInput = () => {
     const t = newInput.trim()
     if (!t || inputs.includes(t)) return
@@ -634,8 +656,42 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
 
   const closeResult = () => {
     setShowResult(false)
+    try {
+      const el = resultAudioRef.current
+      if (el) {
+        el.pause()
+        el.currentTime = 0
+      }
+    } catch (e) {}
     stopConfetti()
   }
+
+  // Close result popup with Enter key when visible
+  React.useEffect(() => {
+    if (typeof window === "undefined") return
+    if (!showResult) return
+    const onKeyDown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault()
+        closeResult()
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [showResult, closeResult])
+
+  // Play result sound when the popup becomes visible
+  React.useEffect(() => {
+    if (!soundEnabled) return
+    if (!showResult) return
+    if (typeof window === "undefined" || typeof Audio === "undefined") return
+    try {
+      if (!resultAudioRef.current) resultAudioRef.current = new Audio(resultSfx)
+      const el = resultAudioRef.current
+      el.currentTime = 0
+      el.play().catch(() => {})
+    } catch (e) {}
+  }, [showResult, soundEnabled])
 
   const wheelContainer = (
     <div className="wheel-container">
@@ -733,8 +789,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
       {!hideHeader && (
         <header className="header">
           <Link to="/" className="logo" style={{ textDecoration: "none", color: "inherit" }}>
-            <div className="wheel-icon">🎯</div>
-            <h1>{siteTitle}</h1>
+            <img src={wheelLogo} alt="Wheels Picker" width={200} height={70} style={{ display: "block" }} />
           </Link>
           <nav className="nav">
             
