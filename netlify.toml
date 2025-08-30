@@ -13,3 +13,9 @@
   # GATSBY_GA_MEASUREMENT_ID = "G-XXXXXXXXXX"
 
 
+[[redirects]]
+  from = "/sitemap_index.xml"
+  to = "/sitemap-index.xml"
+  status = 200
+  force = true
+
