@@ -1,0 +1,10 @@
+# robots.txt for wheelspicker.com
+# Static file overrides plugin-generated robots if both exist.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://wheelspicker.com/sitemap-index.xml
+Host: https://wheelspicker.com
+
+
