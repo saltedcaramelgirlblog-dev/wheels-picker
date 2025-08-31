@@ -2,4 +2,4 @@
 User-agent: *
 Disallow: 
 Disallow: /cgi-bin/
-Sitemap: https://wheelspicker.com/sitemap_index.xml
+Sitemap: https://wheelspicker.com/sitemap-index.xml
