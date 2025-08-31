@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Link, useStaticQuery, graphql } from "gatsby"
+ 
 import wheelLogo from "../images/wheels-picker-icon-200.png"
 import resultSfx from "../sounds/Anime WOW - Sound Effect (HD).mp3"
 

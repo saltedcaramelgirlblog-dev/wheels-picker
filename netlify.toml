@@ -13,9 +13,5 @@
   # GATSBY_GA_MEASUREMENT_ID = "G-XXXXXXXXXX"
 
 
-[[redirects]]
-  from = "/sitemap_index.xml"
-  to = "/sitemap-index.xml"
-  status = 200
-  force = true
+## Removed sitemap redirect to avoid any redirection for sitemap URLs
 

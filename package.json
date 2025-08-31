@@ -11,7 +11,7 @@
     "develop": "GATSBY_DB_NODES=loki gatsby develop",
     "start": "GATSBY_DB_NODES=loki gatsby develop",
     "build": "GATSBY_DB_NODES=loki gatsby build",
-    "build:netlify": "gatsby clean && GATSBY_SKIP_VALIDATE_ENGINES=1 gatsby build",
+    "build:netlify": "gatsby clean && GATSBY_SKIP_VALIDATE_ENGINES=1 gatsby build && node scripts/flatten-sitemap.js",
     "serve": "GATSBY_DB_NODES=loki gatsby serve",
     "clean": "gatsby clean"
   },
