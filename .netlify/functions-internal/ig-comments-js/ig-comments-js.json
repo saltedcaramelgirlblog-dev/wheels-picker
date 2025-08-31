@@ -1,1 +1,1 @@
-{"config":{"name":"/api/ig-comments","generator":"gatsby-adapter-netlify@1.2.1","includedFiles":[".cache/functions/ig-comments.js"],"includedFilesBasePath":"/Users/imene/wheels-picker","externalNodeModules":["msgpackr-extract"]},"version":1}
+{"config":{"name":"/api/ig-comments","generator":"gatsby-adapter-netlify@1.3.0","includedFiles":[".cache/functions/ig-comments.js"],"includedFilesBasePath":"/Users/imene/wheels-picker","externalNodeModules":["msgpackr-extract"]},"version":1}

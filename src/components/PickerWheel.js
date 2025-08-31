@@ -67,6 +67,8 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
   const [watermarkVisible, setWatermarkVisible] = React.useState(!!showWatermarkOnLoad)
   const [settingsOpen, setSettingsOpen] = React.useState(false)
   const settingsRef = React.useRef(null)
+  const [showPasteModal, setShowPasteModal] = React.useState(false)
+  const [pasteText, setPasteText] = React.useState("")
 
   // yes/no variant state
   const isYesNoVariant = variant === "yesno"
@@ -202,6 +204,27 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
       }
     }
   }
+
+  // --- Paste inputs helpers ---
+  const parseNamesFromText = React.useCallback((text) => {
+    const raw = String(text || "").trim()
+    if (!raw) return []
+    const parts = raw.split(/[\n,;\t\r]+/)
+    const cleaned = parts.map((s) => s.trim()).filter(Boolean)
+    return cleaned.slice(0, 1000)
+  }, [])
+
+  const previewPasted = React.useMemo(() => parseNamesFromText(pasteText), [pasteText, parseNamesFromText])
+
+  const applyPastedInputs = React.useCallback(() => {
+    const next = parseNamesFromText(pasteText)
+    if (next.length) {
+      inputsRef.current = next
+      setInputs(next)
+    }
+    setPasteText("")
+    setShowPasteModal(false)
+  }, [pasteText, parseNamesFromText])
 
   const draw = React.useCallback(
     (rotationRadians) => {
@@ -1108,10 +1131,10 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
             <div className="panel-header">
               <h3>INPUTS</h3>
               <div className="panel-controls">
-                <button className="panel-btn">👁️</button>
-                <button className="panel-btn">↩️</button>
-                <button className="panel-btn">☰</button>
-                <button className="panel-btn">⋯</button>
+                <button className="panel-btn" title="Preview">👁️</button>
+                <button className="panel-btn" title="Reset">↩️</button>
+                <button className="panel-btn" title="More">☰</button>
+                <button className="panel-btn" title="Copy & paste inputs" onClick={() => setShowPasteModal(true)}>📋</button>
               </div>
             </div>
 
@@ -1250,6 +1273,72 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showPasteModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(0,0,0,0.45)",
+            zIndex: 1100,
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            style={{
+              background: "#1f2937",
+              color: "#e5e7eb",
+              padding: "20px 20px 16px",
+              borderRadius: 14,
+              boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+              minWidth: 320,
+              maxWidth: 900,
+              width: "90%",
+              border: "1px solid #374151",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <div style={{ fontWeight: 800 }}>Copy & paste inputs</div>
+              <button onClick={() => setShowPasteModal(false)} style={{ background: "transparent", color: "#9ca3af", border: "none", cursor: "pointer", fontSize: 20 }}>×</button>
+            </div>
+            <div style={{ display: "grid", gap: 16, gridTemplateColumns: "1fr 1fr" }}>
+              <div>
+                <div style={{ marginBottom: 6, opacity: 0.9 }}>Paste your inputs here:</div>
+                <textarea
+                  value={pasteText}
+                  onChange={(e) => setPasteText(e.target.value)}
+                  placeholder={"One per line, or comma-separated"}
+                  style={{ width: "100%", minHeight: 260, resize: "vertical", padding: 12, borderRadius: 10, border: "1px solid #4b5563", background: "#111827", color: "#e5e7eb" }}
+                />
+              </div>
+              <div>
+                <div style={{ marginBottom: 6, opacity: 0.9 }}>Preview:</div>
+                <div style={{ border: "1px solid #4b5563", borderRadius: 10, padding: 10, minHeight: 260, background: "#111827", color: "#e5e7eb", overflowY: "auto" }}>
+                  {previewPasted.length === 0 ? (
+                    <div style={{ opacity: 0.7 }}>No inputs pasted yet...</div>
+                  ) : (
+                    <ol style={{ margin: 0, paddingLeft: 18 }}>
+                      {previewPasted.map((t, i) => (
+                        <li key={i}>{t}</li>
+                      ))}
+                    </ol>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
+              <button onClick={() => setShowPasteModal(false)} style={{ background: "#374151", color: "#e5e7eb", border: "1px solid #4b5563", padding: "8px 12px", borderRadius: 8, cursor: "pointer" }}>Cancel</button>
+              <button onClick={applyPastedInputs} style={{ background: "#7c3aed", color: "white", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer", fontWeight: 700 }}>+ Add inputs</button>
             </div>
           </div>
         </div>
