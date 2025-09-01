@@ -195,6 +195,15 @@ body {
     font-size: 0.9rem;
 }
 
+.spin-animated {
+    animation: pulseSpinBtn 2.2s ease-in-out infinite;
+}
+
+@keyframes pulseSpinBtn {
+    0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+    50% { filter: hue-rotate(25deg) brightness(1.1); }
+}
+
 .wheel-controls {
     display: flex;
     gap: 1rem;
@@ -668,3 +677,43 @@ body {
 
 
 
+
+/* Local Settings Panel */
+.local-settings { background: #ffffff; margin-top: 16px; border-radius: 14px; border: 1px solid #e5e7eb; box-shadow: 0 8px 24px rgba(0,0,0,0.08); width: 100%; max-width: 980px; }
+.local-settings[open] { box-shadow: 0 12px 30px rgba(0,0,0,0.10); }
+.local-settings > summary { list-style: none; cursor: pointer; }
+.local-settings > summary::-webkit-details-marker { display: none; }
+.local-settings .settings-header { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+
+.local-settings .settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 16px;
+}
+
+.local-settings .settings-col {
+    display: grid;
+    gap: 10px;
+}
+
+.local-settings .settings-group-title {
+    font-weight: 900;
+    color: var(--c-navy);
+    margin-bottom: 6px;
+}
+
+.local-settings .setting-row {
+    display: grid;
+    gap: 6px;
+}
+
+.local-settings input[type="range"] {
+    width: 100%;
+}
+
+.local-settings .setting-actions { margin-top: 8px; }
+
+@media (max-width: 768px) {
+    .local-settings .settings-grid { grid-template-columns: 1fr; }
+}

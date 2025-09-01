@@ -13,7 +13,7 @@ const COLORS = [
   "#D62828", // red
 ]
 
-export default function PickerWheel({ initialInputs, title, subtitle, variant, onResult, inputs: controlledInputs, hideHeader, hideInputsPanel, renderOnlyWheel, autoConfetti = true, confettiDurationMs = 1200, stopConfettiOnUnmount = true, showWatermarkOnLoad = false, watermarkText = "Press to Spin" } = {}) {
+export default function PickerWheel({ initialInputs, title, subtitle, variant, onResult, inputs: controlledInputs, hideHeader, hideInputsPanel, renderOnlyWheel, showLocalSettings = true, autoConfetti = true, confettiDurationMs = 1200, stopConfettiOnUnmount = true, showWatermarkOnLoad = false, watermarkText = "Press to Spin" } = {}) {
   const canvasRef = React.useRef(null)
   const data = useStaticQuery(graphql`
     query PickerWheelSiteTitleQuery {
@@ -69,6 +69,49 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
   const settingsRef = React.useRef(null)
   const [showPasteModal, setShowPasteModal] = React.useState(false)
   const [pasteText, setPasteText] = React.useState("")
+
+  // Local settings panel state (persisted)
+  const [speedLevel, setSpeedLevel] = React.useState(1) // 1..5
+  const [durationSec, setDurationSec] = React.useState(10) // 1..60
+  const [manualStop, setManualStop] = React.useState(false)
+  const stopRequestedRef = React.useRef(false)
+  const [mysterySpin, setMysterySpin] = React.useState(false)
+  const [showSpinCount, setShowSpinCount] = React.useState(false)
+  const [spinCount, setSpinCount] = React.useState(0)
+  const [randomInitialAngle, setRandomInitialAngle] = React.useState(true)
+  const [initialSpinning, setInitialSpinning] = React.useState(true)
+  const [spinBtnAnimated, setSpinBtnAnimated] = React.useState(true)
+  const [confettiEnabled, setConfettiEnabled] = React.useState(true)
+  const [segmentColors, setSegmentColors] = React.useState(COLORS)
+  const [colorScheme, setColorScheme] = React.useState("default")
+  const [backgroundColor, setBackgroundColor] = React.useState("#f5f5f5")
+  const [backgroundImage, setBackgroundImage] = React.useState("")
+  const [spinButtonColor, setSpinButtonColor] = React.useState("#003049")
+  const [showBanner, setShowBanner] = React.useState(true)
+
+  // Load saved settings
+  React.useEffect(() => {
+    if (typeof window === "undefined") return
+    try {
+      const raw = localStorage.getItem("picker_settings_v1")
+      if (!raw) return
+      const s = JSON.parse(raw)
+      if (typeof s.speedLevel === "number") setSpeedLevel(s.speedLevel)
+      if (typeof s.durationSec === "number") setDurationSec(s.durationSec)
+      if (typeof s.manualStop === "boolean") setManualStop(s.manualStop)
+      if (typeof s.mysterySpin === "boolean") setMysterySpin(s.mysterySpin)
+      if (typeof s.showSpinCount === "boolean") setShowSpinCount(s.showSpinCount)
+      if (typeof s.randomInitialAngle === "boolean") setRandomInitialAngle(s.randomInitialAngle)
+      if (typeof s.initialSpinning === "boolean") setInitialSpinning(s.initialSpinning)
+      if (typeof s.spinBtnAnimated === "boolean") setSpinBtnAnimated(s.spinBtnAnimated)
+      if (typeof s.confettiEnabled === "boolean") setConfettiEnabled(s.confettiEnabled)
+      if (typeof s.colorScheme === "string") setColorScheme(s.colorScheme)
+      if (typeof s.backgroundColor === "string") setBackgroundColor(s.backgroundColor)
+      if (typeof s.backgroundImage === "string") setBackgroundImage(s.backgroundImage)
+      if (typeof s.spinButtonColor === "string") setSpinButtonColor(s.spinButtonColor)
+      if (typeof s.showBanner === "boolean") setShowBanner(s.showBanner)
+    } catch (e) {}
+  }, [])
 
   // yes/no variant state
   const isYesNoVariant = variant === "yesno"
@@ -248,7 +291,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
         ctx.moveTo(centerX, centerY)
         ctx.arc(centerX, centerY, radius, start, end)
         ctx.closePath()
-        ctx.fillStyle = COLORS[index % COLORS.length]
+        ctx.fillStyle = segmentColors[index % segmentColors.length]
         ctx.fill()
         ctx.strokeStyle = "#fff"
         ctx.lineWidth = 2
@@ -266,7 +309,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
         if (mid > Math.PI / 2 && mid < (3 * Math.PI) / 2) ctx.rotate(Math.PI)
-        const parts = String(label).split("\n")
+        const parts = String(mysterySpin ? "?" : label).split("\n")
         if (parts.length > 1) {
           // first line: emoji/flag larger
           ctx.font = "28px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif"
@@ -336,7 +379,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
       ctx.stroke()
       ctx.restore()
     },
-    [inputs, watermarkVisible, watermarkText]
+    [inputs, watermarkVisible, watermarkText, segmentColors, mysterySpin]
   )
 
   // draw on mount and when rotation/inputs change
@@ -410,9 +453,13 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
   }, [])
 
   React.useEffect(() => {
-    startIdleSpin()
+    if (initialSpinning) {
+      startIdleSpin()
+    } else {
+      stopIdleSpin()
+    }
     return () => stopIdleSpin()
-  }, [startIdleSpin, stopIdleSpin])
+  }, [startIdleSpin, stopIdleSpin, initialSpinning])
 
   // Helpers for yes/no variant
   const regenerateYesNoInputs = React.useCallback((m, sets) => {
@@ -440,11 +487,13 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
     nextTickAllowedTimeRef.current = performance.now() + tickDelayMsRef.current
 
     const start = performance.now()
-    const duration = 6000
+    const clampedDuration = Math.max(1000, Math.min(60000, Math.floor(durationSec * 1000)))
+    const duration = manualStop ? 60000 : clampedDuration
     const startRotation = rotation
-    const spins = 6 + Math.random() * 6
+    const spins = 4 + speedLevel * 2 + Math.random() * 4
     const finalAngle = Math.random() * (2 * Math.PI)
     const target = startRotation + spins * 2 * Math.PI + finalAngle
+    stopRequestedRef.current = false
 
     // initialize last tick index based on current position to avoid an immediate tick
     const segInit = (2 * Math.PI) / inputs.length
@@ -453,6 +502,31 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
     lastTickIndexRef.current = Math.floor(relInit / segInit)
     const tick = () => {
       const now = performance.now()
+      if (stopRequestedRef.current) {
+        setRotation(target)
+        setIsSpinning(false)
+        const seg = (2 * Math.PI) / inputs.length
+        const pointer = -Math.PI / 2
+        const rel = ((pointer - target) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)
+        const idx = Math.floor(rel / seg) % inputs.length
+        const text = inputs[idx]
+        setResultText(text)
+        setResultsHistory((prev) => [{ text, timestamp: Date.now() }, ...prev])
+        if (typeof onResult === "function") {
+          try { onResult(text) } catch (e) {}
+        }
+        if (isYesNoVariant) {
+          const t = String(text).toUpperCase()
+          if (t === "YES") setYesCount((c) => c + 1)
+          if (t === "NO") setNoCount((c) => c + 1)
+          if (t === "MAYBE") setMaybeCount((c) => c + 1)
+        }
+        setShowResult(true)
+        setSpinCount((c) => c + 1)
+        if (autoConfetti && confettiEnabled) startConfetti(confettiDurationMs)
+        setTimeout(() => startIdleSpin(), 800)
+        return
+      }
       const p = Math.min((now - start) / duration, 1)
       const ease = 1 - Math.pow(1 - p, 5)
       const value = startRotation + (target - startRotation) * ease
@@ -490,12 +564,13 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
           if (t === "MAYBE") setMaybeCount((c) => c + 1)
         }
         setShowResult(true)
-        if (autoConfetti) startConfetti(confettiDurationMs)
+        setSpinCount((c) => c + 1)
+        if (autoConfetti && confettiEnabled) startConfetti(confettiDurationMs)
         setTimeout(() => startIdleSpin(), 800)
       }
     }
     requestAnimationFrame(tick)
-  }, [isSpinning, inputs.length, rotation, playTick, playCenterClick, startIdleSpin, stopIdleSpin, inputs, onResult, isYesNoVariant, autoConfetti, confettiDurationMs])
+  }, [isSpinning, inputs.length, rotation, playTick, playCenterClick, startIdleSpin, stopIdleSpin, inputs, onResult, isYesNoVariant, autoConfetti, confettiDurationMs, durationSec, speedLevel, manualStop, confettiEnabled])
 
   // Global keyboard shortcut: Cmd+Enter (macOS) or Ctrl+Enter (Windows) to spin
   React.useEffect(() => {
@@ -523,6 +598,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
     inputsRef.current = next
     setInputs(next)
     setNewInput("")
+    if (randomInitialAngle) setRotation(Math.random() * Math.PI * 2)
   }
 
   const removeInput = (index) => {
@@ -735,7 +811,8 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
       >
         <canvas ref={canvasRef} id="wheelCanvas" width={560} height={560} />
         <div
-          className="spin-button"
+          className={`spin-button${spinBtnAnimated ? " spin-animated" : ""}`}
+          style={{ background: spinButtonColor }}
           onMouseDown={() => setWatermarkVisible(false)}
           onTouchStart={() => setWatermarkVisible(false)}
           onClick={spin}
@@ -754,13 +831,149 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
         </button>
         <button className="control-btn" onClick={() => setShowHistory(true)} title="Results History">🏆</button>
       </div>
+      {showSpinCount && (
+        <div style={{ marginTop: 8, color: "#555", fontWeight: 700 }}>Total Spins: {spinCount}</div>
+      )}
+      {manualStop && isSpinning && (
+        <div style={{ marginTop: 10 }}>
+          <button onClick={() => { stopRequestedRef.current = true }} style={{ background: "#ef4444", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer", fontWeight: 800 }}>Stop</button>
+        </div>
+      )}
     </div>
+  )
+
+  const SettingsPanel = (
+    <details className="local-settings">
+      <summary className="settings-header">
+        <div style={{ fontWeight: 800 }}>Tool Settings</div>
+        <span style={{ opacity: 0.7, fontSize: 12 }}>(Click to Expand/Collapse)</span>
+      </summary>
+      <div className="settings-grid">
+        <div className="settings-col">
+          <div className="settings-group-title">Spin Behavior</div>
+          <div className="setting-row">
+            <div>Spinning Speed Level: <strong>{speedLevel}</strong></div>
+            <input type="range" min={1} max={5} value={speedLevel} onChange={(e) => setSpeedLevel(Number(e.target.value))} />
+          </div>
+          <div className="setting-row">
+            <div>Spinning Duration: <strong>{durationSec}s</strong> (Default)</div>
+            <input type="range" min={3} max={60} value={durationSec} onChange={(e) => setDurationSec(Number(e.target.value))} />
+          </div>
+          <div className="setting-row">
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input type="checkbox" checked={manualStop} onChange={(e) => setManualStop(e.target.checked)} />
+              <span>Manually Stop (Max 1 min)</span>
+            </label>
+          </div>
+          <div className="setting-row">
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input type="checkbox" checked={mysterySpin} onChange={(e) => setMysterySpin(e.target.checked)} />
+              <span>Mystery Spin (Hide inputs on wheel)</span>
+            </label>
+          </div>
+          <div className="setting-row">
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input type="checkbox" checked={confettiEnabled && soundEnabled} onChange={(e) => { const v = e.target.checked; setConfettiEnabled(v); setSoundEnabled(v) }} />
+              <span>Confetti & Sound</span>
+            </label>
+          </div>
+          <div className="setting-row">
+            <div>Tool Colors</div>
+            <select value={colorScheme} onChange={(e) => {
+              const v = e.target.value; setColorScheme(v);
+              if (v === "default") setSegmentColors(COLORS)
+              if (v === "warm") setSegmentColors(["#7c2d12", "#ea580c", "#f59e0b", "#f97316", "#b91c1c", "#be123c"])
+              if (v === "ocean") setSegmentColors(["#0ea5e9", "#0369a1", "#22d3ee", "#164e63", "#06b6d4", "#0e7490"])
+              if (v === "candy") setSegmentColors(["#ef4444", "#f43f5e", "#ec4899", "#a855f7", "#f59e0b", "#10b981"])
+            }}>
+              <option value="default">Default</option>
+              <option value="warm">Warm</option>
+              <option value="ocean">Ocean</option>
+              <option value="candy">Candy</option>
+            </select>
+          </div>
+          <div className="setting-row">
+            <div>Background Color</div>
+            <input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} />
+          </div>
+          <div className="setting-row">
+            <div>Background Image</div>
+            <input type="text" placeholder="Image URL" value={backgroundImage} onChange={(e) => setBackgroundImage(e.target.value)} />
+          </div>
+          <div className="setting-row">
+            <div>Spin Button</div>
+            <input type="color" value={spinButtonColor} onChange={(e) => setSpinButtonColor(e.target.value)} />
+          </div>
+          <div className="setting-row">
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input type="checkbox" checked={showBanner} onChange={(e) => setShowBanner(e.target.checked)} />
+              <span>Banner | Logo</span>
+            </label>
+          </div>
+          <div className="setting-actions">
+            <button
+              className="primary-btn"
+              onClick={() => {
+                try {
+                  const payload = {
+                    speedLevel,
+                    durationSec,
+                    manualStop,
+                    mysterySpin,
+                    showSpinCount,
+                    randomInitialAngle,
+                    initialSpinning,
+                    spinBtnAnimated,
+                    confettiEnabled,
+                    colorScheme,
+                    backgroundColor,
+                    backgroundImage,
+                    spinButtonColor,
+                    showBanner,
+                  }
+                  localStorage.setItem("picker_settings_v1", JSON.stringify(payload))
+                } catch (e) {}
+              }}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+        <div className="settings-col">
+          <div className="setting-row">
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input type="checkbox" checked={showSpinCount} onChange={(e) => setShowSpinCount(e.target.checked)} />
+              <span>Spin Count (Show total spin number)</span>
+            </label>
+          </div>
+          <div className="setting-row">
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input type="checkbox" checked={randomInitialAngle} onChange={(e) => setRandomInitialAngle(e.target.checked)} />
+              <span>Random Initial Angle (When new input inserted)</span>
+            </label>
+          </div>
+          <div className="setting-row">
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input type="checkbox" checked={initialSpinning} onChange={(e) => setInitialSpinning(e.target.checked)} />
+              <span>Initial Spinning (Wheel rotates slowly after page load)</span>
+            </label>
+          </div>
+          <div className="setting-row">
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input type="checkbox" checked={spinBtnAnimated} onChange={(e) => setSpinBtnAnimated(e.target.checked)} />
+              <span>SPIN Button Animation and Color-Changing</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </details>
   )
 
   if (renderOnlyWheel) {
     return (
       <>
         {wheelContainer}
+        {showLocalSettings ? SettingsPanel : null}
         {showResult && (
           <div
             style={{
@@ -875,8 +1088,8 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
   }
 
   return (
-    <div className="container">
-      {!hideHeader && (
+    <div className="container" style={{ background: backgroundColor, backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined, backgroundSize: backgroundImage ? "cover" : undefined, backgroundPosition: "center" }}>
+      {!hideHeader && showBanner && (
         <header className="header">
           <Link to="/" className="logo" style={{ textDecoration: "none", color: "inherit" }}>
             <img src={wheelLogo} alt="Wheels Picker" width={200} height={70} style={{ display: "block" }} />
@@ -1049,6 +1262,7 @@ export default function PickerWheel({ initialInputs, title, subtitle, variant, o
       <div className="main-content">
         <div className="wheel-section">
           {wheelContainer}
+          {SettingsPanel}
         </div>
 
         {!hideInputsPanel && (

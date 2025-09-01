@@ -88,6 +88,7 @@ const WheelOfNamesPage = () => {
                 hideHeader
                 hideInputsPanel
                 renderOnlyWheel
+                showLocalSettings
                 onResult={onResult}
                 showWatermarkOnLoad
               />

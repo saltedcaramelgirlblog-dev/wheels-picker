@@ -241,6 +241,7 @@ const RandomTeamGeneratorPage = () => {
               hideHeader
               hideInputsPanel
               renderOnlyWheel
+              showLocalSettings={false}
               onResult={onWheelResult}
             />
           </div>
